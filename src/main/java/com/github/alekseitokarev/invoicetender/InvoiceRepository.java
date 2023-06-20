@@ -20,13 +20,17 @@ public class InvoiceRepository {
     public List<Invoice> getInvoicesByCustomerId(long customerId) {
         String sql = "SELECT invoice_id, invoice_data::varchar FROM invoice WHERE customer_id = ?";
         List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, customerId);
-        return result.stream().map((row) -> {
-            var invoice = new Invoice();
-            invoice.setId((Long) row.get("invoice_id"));
-            var invoiceData = parseInvoiceData((String) row.get("invoice_data"));
-            invoice.setInvoiceData(invoiceData);
-            return invoice;
-        }).toList();
+        return result.stream()
+                .map(this::createInvoice)
+                .toList();
+    }
+
+    private Invoice createInvoice(Map<String, Object> row) {
+        var invoice = new Invoice();
+        invoice.setId((Long) row.get("invoice_id"));
+        var invoiceData = parseInvoiceData((String) row.get("invoice_data"));
+        invoice.setInvoiceData(invoiceData);
+        return invoice;
     }
 
     @SneakyThrows
