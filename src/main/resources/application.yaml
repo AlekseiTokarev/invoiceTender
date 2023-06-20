@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url:
+    url: jdbc:tc:postgresql:14.1:///invoice?TC_INITSCRIPT=init.sql
     username: postgres
     password: postgres
