@@ -2,6 +2,7 @@ package com.github.alekseitokarev.invoicetender;
 
 import com.github.alekseitokarev.invoicetender.entities.Invoice;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,9 @@ public class InvoiceController {
             @RequestParam("customerId") Long customerId) {
 
         List<Invoice> invoices = invoiceRepository.getInvoicesByCustomerId(customerId);
+        if (invoices.isEmpty()) {
+            return new ResponseEntity(Map.of("error", "no invoices found"), HttpStatus.NOT_FOUND);
+        }
         List<Map<Long, String>> responseMap = invoices.stream()
                 .map((invoice) -> Map.of(invoice.getId(), invoice.getInvoiceData().getTenderDetails().getType()))
                 .toList();
